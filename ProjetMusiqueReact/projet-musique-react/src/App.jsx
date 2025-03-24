@@ -1,7 +1,8 @@
 
 import { useEffect, useState } from 'react';
 import './App.css'
-// import Inputs from './Inputs';
+import InputsEvent from './InputsEvent';
+import InputsArtist from './InputsArtist';
 // import TodoList from './TodoList';
 
 function App() {
@@ -13,7 +14,9 @@ function App() {
   return <div className='container' style={{  }}>
     {/* <Inputs /> */}
     <Artists /><br />
-    <Events />
+    <Events /><br />
+    <InputsEvent /><br />
+    <InputsArtist />
     
   </div>
 }
