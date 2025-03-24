@@ -1,0 +1,4 @@
+composer require nelmio/cors-bundle
+Dans le projet Symfony car en gros si je veux prendre des info d'une api depuis un autre port (par exemple) je dois dire qui peut acceder à cette API. On utilise dont des CORS pour donner les différents accès. (Cf ChatGPT : CORS issue React backend)
+
+
