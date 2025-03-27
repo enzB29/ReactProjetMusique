@@ -15,10 +15,10 @@ function App() {
   
   return <div className='container' style={{  }}>
     <ul>
-      <button onClick={()=>setnavigation(<Events />)}>Events</button>
-      <button onClick={()=>setnavigation(<Artists />)}>Artists</button>
-      <button onClick={()=>setnavigation(<InputsEvent />)}>Rechercher un event par id</button>
-      <button onClick={()=>setnavigation(<InputsArtist />)}>Rechercher un artiste par id</button>
+      <button onClick={()=>setnavigation(<Events />)} style={buttonStyle}>Events</button>
+      <button onClick={()=>setnavigation(<Artists />)} style={buttonStyle}>Artists</button>
+      <button onClick={()=>setnavigation(<InputsEvent />)} style={buttonStyle}>Rechercher un event</button>
+      <button onClick={()=>setnavigation(<InputsArtist />)} style={buttonStyle}>Rechercher un artiste</button>
     </ul>
     {navigation}
     
@@ -259,6 +259,17 @@ function Events() {
   );
 }
 
+const buttonStyle = {
+  padding: '12px 20px',        // Plus de padding pour une meilleure taille de bouton
+  backgroundColor: '#2c3e50',   // Couleur de fond du bouton
+  color: 'white',               // Couleur du texte
+  border: 'none',
+  borderRadius: '5px',
+  cursor: 'pointer',
+  fontSize: '16px',
+  transition: 'background-color 0.3s ease',
+  width: '100%',                // Faire les boutons occuper toute la largeur du conteneur
+};
 
 
 export default App
