@@ -1,4 +1,5 @@
 # Projet Front React - Gestion des Artistes et Evènements
+# Un projet de Enzo BORDET, Corentin DETOURNAY, Virgile MARION
 
 ## Description
 Ce projet est une application web développée avec **React** et **ViteJs** permettant de gérer et afficher des informations sur des artistes et des évènements. L'application propose quatre pages principales :
