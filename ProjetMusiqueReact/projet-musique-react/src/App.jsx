@@ -15,16 +15,12 @@ function App() {
   
   return <div className='container' style={{  }}>
     <ul>
-    <li onClick={()=>setnavigation(<Events />)}>Events</li>
-    <li onClick={()=>setnavigation(<Artists />)}>Artists</li>
-    <li onClick={()=>setnavigation(<InputsEvent />)}>Rechercher un event</li>
-    <li onClick={()=>setnavigation(<InputsArtist />)}>Rechercher un artiste</li>
+      <button onClick={()=>setnavigation(<Events />)}>Events</button>
+      <button onClick={()=>setnavigation(<Artists />)}>Artists</button>
+      <button onClick={()=>setnavigation(<InputsEvent />)}>Rechercher un event par id</button>
+      <button onClick={()=>setnavigation(<InputsArtist />)}>Rechercher un artiste par id</button>
     </ul>
     {navigation}
-    {/* <Artists /><br />
-    <Events /><br />
-    <InputsEvent /><br />
-    <InputsArtist /> */}
     
   </div>
 }
@@ -37,6 +33,8 @@ function Artists() {
   const [artists, setArtists] = useState([]);
   const [selectedArtist, setSelectedArtist] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  const [sortedArtists, setSortedArtists] = useState([]);
+  const [isSorted, setIsSorted] = useState(false); // Ajout d'un état pour savoir si les artistes sont triés
 
   useEffect(() => {
     console.log('Fetching artists...');
@@ -46,6 +44,7 @@ function Artists() {
         console.log('API Response:', jsondata);
         if (Array.isArray(jsondata)) {
           setArtists(jsondata);
+          setSortedArtists(jsondata); // Par défaut, afficher les artistes non triés
         } else {
           console.error('Unexpected API response format:', jsondata);
         }
@@ -79,12 +78,30 @@ function Artists() {
       });
   }
 
+  // Fonction pour trier les artistes par nom
+  const sortArtistsAlphabetically = () => {
+    if (!isSorted) {
+      // Si les artistes ne sont pas encore triés, on les trie par ordre alphabétique
+      const sorted = [...artists].sort((a, b) => a.name.localeCompare(b.name));
+      setSortedArtists(sorted);
+      setIsSorted(true); // Mettre à jour l'état pour indiquer que la liste est triée
+    } else {
+      // Si les artistes sont déjà triés, on les remet dans l'ordre original
+      setSortedArtists(artists);
+      setIsSorted(false); // Réinitialiser l'état pour indiquer qu'ils ne sont plus triés
+    }
+  };
+
   return (
     <div>
       <h2>Artists</h2>
+      <button onClick={sortArtistsAlphabetically}>
+        {isSorted ? "Afficher les artistes non triés" : "Trier par ordre alphabétique"} 
+        {/* change le texte si les artits sont trié ou non */}
+      </button>
       <ul>
-        {artists.length > 0 ? (
-          artists.map((artist) => (
+        {(isSorted ? sortedArtists : artists).length > 0 ? (
+          (isSorted ? sortedArtists : artists).map((artist) => (
             <li key={artist.id}>
               <h3>{artist.name}</h3>
               <p>{artist.description}</p>
@@ -118,20 +135,25 @@ function Artists() {
 
 
 
-function Events(){
-  const [events, setEvents] = useState([])
+
+
+function Events() {
+  const [events, setEvents] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState(null);
   const [errorMessage, setErrorMessage] = useState("");
+  
+  const [sortedEvents, setSortedEvents] = useState([]);
+  const [isSorted, setIsSorted] = useState(false); // Pour savoir si trié alphabétiquement
+  const [isDateSorted, setIsDateSorted] = useState(false); // Pour savoir si trié par date
 
-  useEffect(()=>{
+  useEffect(() => {
     fetch('http://127.0.0.1:8000/api/events')
       .then((res) => res.json())
       .then((jsondata) => {
-        console.log('API Response:', jsondata); // donne dans la console les élément de la data
-
-        // If jsondata is an array (i.e., multiple artists)
+        console.log('API Response:', jsondata);
         if (Array.isArray(jsondata)) {
           setEvents(jsondata);
+          setSortedEvents(jsondata); // Par défaut, afficher les événements non triés
         } else {
           console.error('Unexpected API response format:', jsondata);
         }
@@ -139,7 +161,7 @@ function Events(){
       .catch((error) => {
         console.error('Error fetching data:', error);
       });
-  },[])
+  }, []);
 
   function fetchEvent(EventID) {
     fetch(`http://127.0.0.1:8000/api/events/${EventID}`)
@@ -165,24 +187,63 @@ function Events(){
       });
   }
 
-  return <div>
-    <h2>Events</h2>
-    <ul>
-      {events.map((event)=> ( 
-        <li key={event.id}>
-          <h3>Nom de l'event : {event.name}</h3>
-          <p>Date de l'event : {event.date}</p>
-          <p>Nom de l'artist phare : {event.artist.name}</p> 
-          {/* Essayer de faire le onClique qui montrera les infos de l'artiste */}
-          <p>Createur de l'event : {event.creator.email} </p>
-          <button onClick={()=>fetchEvent(event.id)}>Voir event</button>
-        </li>
-      )
-      )}
-    </ul>
+  // Fonction pour trier par ordre alphabétique
+  const sortEventAlphabetically = () => {
+    if (!isSorted) {
+      const sorted = [...events].sort((a, b) => a.name.localeCompare(b.name));
+      setSortedEvents(sorted);
+      setIsSorted(true);
+    } else {
+      setSortedEvents(events);
+      setIsSorted(false);
+    }
+  };
 
-    {/* Affichage des détails de l'artiste sélectionné */}
-    {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
+  // Fonction pour trier les événements par date
+  const sortEventsByDate = () => {
+    if (!isDateSorted) {
+      // Trier par date croissante (on suppose que la date est une chaîne ISO, par exemple "2025-03-27")
+      const sortedByDate = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+      setSortedEvents(sortedByDate);
+      setIsDateSorted(true);
+    } else {
+      // Trier par date décroissante
+      const sortedByDateDesc = [...events].sort((a, b) => new Date(b.date) - new Date(a.date));
+      setSortedEvents(sortedByDateDesc);
+      setIsDateSorted(false);
+    }
+  };
+
+  return (
+    <div>
+      <h2>Events</h2>
+
+      {/* Boutons de tri */}
+      <button onClick={sortEventAlphabetically}>
+        {isSorted ? "Afficher les Events non triés" : "Trier par ordre alphabétique"}
+      </button>
+      <button onClick={sortEventsByDate}>
+        {isDateSorted ? "Trier par date décroissante" : "Trier par date croissante"}
+      </button>
+
+      <ul>
+        {(isSorted || isDateSorted ? sortedEvents : events).length > 0 ? (
+          (isSorted || isDateSorted ? sortedEvents : events).map((event) => (
+            <li key={event.id}>
+              <h3>Nom de l'event : {event.name}</h3>
+              <p>Date de l'event : {event.date}</p>
+              <p>Nom de l'artiste phare : {event.artist.name}</p>
+              <p>Créateur de l'event : {event.creator.email}</p>
+              <button onClick={() => fetchEvent(event.id)}>Voir event</button>
+            </li>
+          ))
+        ) : (
+          <li>No events found.</li>
+        )}
+      </ul>
+
+      {/* Affichage des détails de l'événement sélectionné */}
+      {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       {selectedEvent && (
         <div>
           <h3>{selectedEvent.name}</h3>
@@ -191,11 +252,13 @@ function Events(){
             <li>Date: {selectedEvent.date}</li>
             <li>Creator: {selectedEvent.creator}</li>
             <li>Artist name: {selectedEvent.artist}</li>
-            {/* {console.log(selectedEvent.creator.email)} */}
           </ul>
         </div>
       )}
-  </div>
+    </div>
+  );
 }
+
+
 
 export default App
