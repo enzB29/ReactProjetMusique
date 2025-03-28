@@ -49,7 +49,7 @@ L'application inclut des fonctionnalités de filtrage, de tri et de navigation e
 ### Installation
 1. Cloner le projet :
    ```sh
-   git clone https://github.com/enzB29/ReactProjetMusique
+   git clone https://github.com/enzB29/ReactProjetMusique.git
    cd ReactProjetMusique/ProjetMusiqueReact/projet-musique-react
    ```
 2. Installer les dépendances :
